@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements file and install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
+RUN pip install --no-cache-dir flake8
 RUN pip install -r requirements.txt
 
 # Copy the entire project code to the working directory
