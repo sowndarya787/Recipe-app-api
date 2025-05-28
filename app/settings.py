@@ -87,8 +87,11 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'postgres'),
         'USER': os.environ.get('DB_USER', 'postgres'),
         'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),  # use 'db' in Docker
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),       # Default to 'db'
+        'PORT': os.environ.get('DB_PORT', '5434'),     # Default to internal DB port 5433
+        'TEST': {
+            'NAME': 'test_postgres',
+        },
     }
 }
 
@@ -140,7 +143,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/static/'
+STATIC_ROOT = '/vol/web/static'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/vol/web/media'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -150,4 +159,21 @@ AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}   
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',  # optional
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUESTS' : True,
+}
